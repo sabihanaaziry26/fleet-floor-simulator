@@ -1,3 +1,4 @@
+
 import type { Floor, Position } from "./types.js";
 
 const MIN_SIZE = 1;
@@ -21,7 +22,8 @@ export function createFloor(
   return {
     width,
     height,
-    obstacles: []
+    obstacles: [],
+    chargers: []
   };
 }
 

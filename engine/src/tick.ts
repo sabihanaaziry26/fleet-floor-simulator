@@ -80,8 +80,16 @@ export function executeTick(
   for (const robot of originalRobots) {
     const command = robot.queue[0] ?? null;
 
-    if (command === "MOVE") {
-      const destination = nextPosition(
+if (command === "MOVE") {
+    if (robot.battery <= 0) {
+        outcomes.set(robot.id, {
+        success: false,
+        reason: "NO_BATTERY"
+        });
+        continue;
+    }
+
+    const destination = nextPosition(
         robot.position,
         robot.facing
       );
@@ -118,6 +126,14 @@ export function executeTick(
     if (samePosition(robot.position, command.target)) {
       alreadyArrived.add(robot.id);
       continue;
+    }
+
+    if (robot.battery <= 0) {
+        outcomes.set(robot.id, {
+            success: false,
+            reason: "NO_BATTERY"
+        });
+        continue;
     }
 
     // GOTO treats other robots' current cells as walls.
@@ -317,6 +333,7 @@ export function executeTick(
           ...intentions.get(robot.id)!
         };
 
+        updated.battery = Math.max(0, robot.battery - 1);
         status = "MOVED";
       } else {
         status = "BLOCKED";
@@ -354,6 +371,8 @@ export function executeTick(
             ...intentions.get(robot.id)!
           };
 
+          updated.battery = Math.max(0, robot.battery - 1);
+
           updated.facing =
             movementDirections.get(robot.id)!;
 
@@ -387,14 +406,27 @@ export function executeTick(
       }
     }
 
+    // Charging happens after movement and commands.
+    // Robots recharge even when idle or blocked.
+    const isOnCharger = state.floor.chargers.some(
+        charger => samePosition(charger, updated.position)
+    );
+
+    if (isOnCharger) {
+        updated.battery = Math.min(
+            100,
+            updated.battery + 10
+        );
+    }
+
     results.push({
-      robotId: robot.id,
-      command,
-      status,
-      reason,
-      from: { ...robot.position },
-      to: { ...updated.position },
-      facing: updated.facing
+        robotId: robot.id,
+        command,
+        status,
+        reason,
+        from: { ...robot.position },
+        to: { ...updated.position },
+        facing: updated.facing
     });
 
     return updated;

@@ -1,8 +1,14 @@
+
 import { readFileSync } from "node:fs";
 
 import { createSimulation } from "../engine/src/state.js";
-import { placeRobot, addObstacle } from "../engine/src/placement.js";
+import {
+  placeRobot,
+  addObstacle
+} from "../engine/src/placement.js";
+import { addCharger } from "../engine/src/chargers.js";
 import { queueCommands } from "../engine/src/commands.js";
+import { queueGoto } from "../engine/src/goto.js";
 import { executeTick } from "../engine/src/tick.js";
 
 import type {
@@ -11,25 +17,36 @@ import type {
   SimulationState
 } from "../engine/src/types.js";
 
-// CLI scenarios default to 5x5, unlike the 10x8 UI default.
+// CLI scenarios default to 5x5.
 function newScenario(): SimulationState {
   return createSimulation(5, 5);
 }
 
-function parsePosition(value: string): Position | null {
+function parsePosition(
+  value: string
+): Position | null {
   const match = /^(\d+),(\d+)$/.exec(value);
 
   if (!match) {
     return null;
   }
 
-  return {
-    x: Number(match[1]),
-    y: Number(match[2])
-  };
+  const x = Number(match[1]);
+  const y = Number(match[2]);
+
+  if (
+    !Number.isSafeInteger(x) ||
+    !Number.isSafeInteger(y)
+  ) {
+    return null;
+  }
+
+  return { x, y };
 }
 
-function parseDirection(value: string): Direction | null {
+function parseDirection(
+  value: string
+): Direction | null {
   const direction = value.toUpperCase();
 
   if (
@@ -48,16 +65,37 @@ function numericId(id: string): number {
   return Number(id.slice(1));
 }
 
-function formatReport(state: SimulationState): string {
+function sortedRobots(state: SimulationState) {
+  return [...state.robots].sort(
+    (a, b) => numericId(a.id) - numericId(b.id)
+  );
+}
+
+function formatReport(
+  state: SimulationState
+): string {
   if (state.robots.length === 0) {
     return "EMPTY";
   }
 
-  return [...state.robots]
-    .sort((a, b) => numericId(a.id) - numericId(b.id))
+  return sortedRobots(state)
     .map(
       robot =>
         `${robot.id} ${robot.position.x},${robot.position.y},${robot.facing}`
+    )
+    .join("\n");
+}
+
+function formatBatteryReport(
+  state: SimulationState
+): string {
+  if (state.robots.length === 0) {
+    return "EMPTY";
+  }
+
+  return sortedRobots(state)
+    .map(
+      robot => `${robot.id} BATTERY ${robot.battery}`
     )
     .join("\n");
 }
@@ -114,6 +152,20 @@ export function runScenario(source: string): string {
       continue;
     }
 
+    if (command === "CHARGER") {
+      if (parts.length !== 2) {
+        continue;
+      }
+
+      const position = parsePosition(parts[1]);
+
+      if (position) {
+        state = addCharger(state, position);
+      }
+
+      continue;
+    }
+
     if (command === "PLACE") {
       if (parts.length !== 3) {
         continue;
@@ -130,10 +182,17 @@ export function runScenario(source: string): string {
         `${details[0]},${details[1]}`
       );
 
-      const facing = parseDirection(details[2]);
+      const facing = parseDirection(
+        details[2]
+      );
 
       if (position && facing) {
-        state = placeRobot(state, id, position, facing);
+        state = placeRobot(
+          state,
+          id,
+          position,
+          facing
+        );
       }
 
       continue;
@@ -144,6 +203,28 @@ export function runScenario(source: string): string {
         continue;
       }
 
+      // Advanced command:
+      // QUEUE R1 GOTO 4,3
+      if (
+        parts.length === 4 &&
+        parts[2] === "GOTO"
+      ) {
+        const position = parsePosition(
+          parts[3]
+        );
+
+        if (position) {
+          state = queueGoto(
+            state,
+            parts[1],
+            position
+          );
+        }
+
+        continue;
+      }
+
+      // Original MOVE, LEFT, RIGHT commands.
       state = queueCommands(
         state,
         parts[1],
@@ -159,7 +240,9 @@ export function runScenario(source: string): string {
       }
 
       const count =
-        parts.length === 1 ? 1 : Number(parts[1]);
+        parts.length === 1
+          ? 1
+          : Number(parts[1]);
 
       if (
         !Number.isSafeInteger(count) ||
@@ -175,8 +258,19 @@ export function runScenario(source: string): string {
       continue;
     }
 
-    if (command === "REPORT" && parts.length === 1) {
-      reports.push(formatReport(state));
+    if (command === "REPORT") {
+      if (parts.length === 1) {
+        reports.push(formatReport(state));
+      } else if (
+        parts.length === 2 &&
+        parts[1] === "BATTERY"
+      ) {
+        reports.push(
+          formatBatteryReport(state)
+        );
+      }
+
+      continue;
     }
 
     // Unknown or malformed commands are ignored.
@@ -192,17 +286,27 @@ if (!scenarioPath) {
   console.error(
     "Usage: npm run scenario -- path/to/scenario.txt"
   );
+
   process.exitCode = 1;
 } else {
   try {
-    const source = readFileSync(scenarioPath, "utf8");
+    const source = readFileSync(
+      scenarioPath,
+      "utf8"
+    );
+
     const output = runScenario(source);
 
     if (output) {
-      process.stdout.write(`${output}\n`);
+      process.stdout.write(
+        `${output}\n`
+      );
     }
   } catch {
-    console.error(`Unable to read scenario file: ${scenarioPath}`);
+    console.error(
+      `Unable to read scenario file: ${scenarioPath}`
+    );
+
     process.exitCode = 1;
   }
 }

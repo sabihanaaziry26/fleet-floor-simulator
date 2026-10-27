@@ -55,7 +55,8 @@ describe("SQLite persistence", () => {
       expect(restored.floor).toEqual({
         width: 5,
         height: 5,
-        obstacles: [{ x: 3, y: 3 }]
+        obstacles: [{ x: 3, y: 3 }],
+        chargers: []
       });
 
       expect(restored.robots[0].queue).toEqual([

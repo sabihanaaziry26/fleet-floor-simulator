@@ -28,6 +28,7 @@ export interface Robot {
   position: Position;
   facing: Direction;
   queue: QueuedCommand[];
+  battery: number;
 }
 
 export interface SimulationEvent {
@@ -42,6 +43,7 @@ export interface SimulationState {
     width: number;
     height: number;
     obstacles: Position[];
+    chargers: Position[];
   };
   robots: Robot[];
   tick: number;

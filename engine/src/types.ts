@@ -28,12 +28,14 @@ export interface Robot {
   position: Position;
   facing: Direction;
   queue: QueuedCommand[];
+  battery: number;
 }
 
 export interface Floor {
   width: number;
   height: number;
   obstacles: Position[];
+  chargers: Position[];
 }
 
 export type TickStatus =

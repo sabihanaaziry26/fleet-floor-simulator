@@ -1,3 +1,4 @@
+
 import { DatabaseSync } from "node:sqlite";
 import { mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -5,8 +6,6 @@ import { dirname, resolve } from "node:path";
 import type { SimulationState } from "../../engine/src/types.js";
 import { createSimulation } from "../../engine/src/state.js";
 
-// The backend is started from the backend directory.
-// This path works for both development and production.
 const DEFAULT_DATABASE_PATH = resolve(
   process.cwd(),
   "data",
@@ -49,7 +48,37 @@ export class SimulationDatabase {
       return initialState;
     }
 
-    return JSON.parse(row.state_json) as SimulationState;
+    // Load the saved simulation.
+    const saved = JSON.parse(row.state_json) as SimulationState;
+
+    // Support older simulations saved before chargers existed.
+    const floor = {
+      ...saved.floor,
+      chargers: Array.isArray(saved.floor.chargers)
+        ? saved.floor.chargers
+        : []
+    };
+
+    // Support robots saved before battery functionality existed.
+    const robots = saved.robots.map(robot => ({
+      ...robot,
+      battery:
+        typeof robot.battery === "number" &&
+        Number.isFinite(robot.battery)
+          ? Math.max(0, Math.min(100, robot.battery))
+          : 100
+    }));
+
+    const migrated: SimulationState = {
+      ...saved,
+      floor,
+      robots
+    };
+
+    // Persist the normalized state for future restarts.
+    this.save(migrated);
+
+    return migrated;
   }
 
   save(state: SimulationState): void {

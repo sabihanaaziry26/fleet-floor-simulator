@@ -76,7 +76,8 @@ export function placeRobot(
         id,
         position: { ...position },
         facing,
-        queue: []
+        queue: [],
+        battery: 100
       }
     ];
   }
@@ -106,7 +107,10 @@ export function addObstacle(
 
   if (
     isOccupied(state, position) ||
-    isObstacle(state, position)
+    isObstacle(state, position) ||
+    state.floor.chargers.some(
+      charger => samePosition(charger, position)
+    )
   ) {
     return state;
   }

@@ -1,11 +1,24 @@
 
 import { useCallback, useEffect, useState } from "react";
-import type { Robot, SimulationState } from "./types";
+import type {
+  QueuedCommand,
+  Robot,
+  SimulationState
+} from "./types";
 import "./App.css";
 import EventHistory from "./EventHistory";
+import GotoControls from "./GotoControls";
 
 const API_URL = "http://localhost:3001";
 const PLAY_INTERVAL_MS = 800;
+
+function formatCommand(command: QueuedCommand): string {
+  if (typeof command === "string") {
+    return command;
+  }
+
+  return `GOTO (${command.target.x}, ${command.target.y})`;
+}
 
 type EditMode = "robots" | "obstacles";
 type RobotCommand = "MOVE" | "LEFT" | "RIGHT";
@@ -42,6 +55,16 @@ function App() {
   const [lastTickResults, setLastTickResults] =
     useState<TickResult[]>([]);
 
+  async function refreshSimulation() {
+    const response = await fetch(`${API_URL}/api/simulation`);
+
+    if (!response.ok) {
+      throw new Error("Unable to refresh simulation");
+    }
+
+    const updated: SimulationState = await response.json();
+    setSimulation(updated); 
+  }
   const [floorWidth, setFloorWidth] = useState("10");
   const [floorHeight, setFloorHeight] = useState("8");
 
@@ -781,11 +804,20 @@ function App() {
                   <ol className="command-queue">
                     {selectedRobot.queue.map(
                       (command, index) => (
-                        <li key={index}>{command}</li>
+                        <li key={index}>{formatCommand(command)}</li>
                       )
                     )}
                   </ol>
                 )}
+
+                 <GotoControls
+                  key={selectedRobot.id}
+                  robotId={selectedRobot.id}
+                  floorWidth={floor.width}
+                  floorHeight={floor.height}
+                  disabled={isSaving || isPlaying}
+                  onQueued={refreshSimulation}
+                />               
               </>
             ) : (
               <p>Click a robot on the grid to select it.</p>

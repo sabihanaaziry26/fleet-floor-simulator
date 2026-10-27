@@ -1,15 +1,33 @@
-export type Direction = "NORTH" | "EAST" | "SOUTH" | "WEST";
+
+export type Direction =
+  | "NORTH"
+  | "EAST"
+  | "SOUTH"
+  | "WEST";
+
+export type RobotCommand =
+  | "MOVE"
+  | "LEFT"
+  | "RIGHT";
 
 export interface Position {
   x: number;
   y: number;
 }
 
+export interface GotoCommand {
+  type: "GOTO";
+  target: Position;
+  blockedTicks: number;
+}
+
+export type QueuedCommand = RobotCommand | GotoCommand;
+
 export interface Robot {
   id: string;
   position: Position;
   facing: Direction;
-  queue: string[];
+  queue: QueuedCommand[];
 }
 
 export interface SimulationEvent {

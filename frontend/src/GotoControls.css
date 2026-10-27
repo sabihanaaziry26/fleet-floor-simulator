@@ -1,0 +1,68 @@
+
+.goto-controls {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.goto-controls h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+
+.goto-description {
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.goto-fields {
+  display: flex;
+  gap: 12px;
+  margin: 14px 0;
+}
+
+.goto-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.goto-fields input {
+  width: 90px;
+  padding: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: white;
+  color: #0f172a;
+  font: inherit;
+}
+
+.goto-button {
+  width: 100%;
+  padding: 11px 16px;
+  background: #7c3aed;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.goto-button:hover:not(:disabled) {
+  background: #6d28d9;
+}
+
+.goto-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.goto-error {
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 10px;
+}

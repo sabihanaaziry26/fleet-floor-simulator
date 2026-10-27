@@ -17,6 +17,7 @@ import { executeTick } from "../../engine/src/tick.js";
 import { resetSimulation } from "../../engine/src/reset.js";
 
 import { SimulationRepository } from "./simulationRepository.js";
+import { createGotoRouter } from "./gotoRouter.js";
 
 const DIRECTIONS: Direction[] = [
   "NORTH",
@@ -39,6 +40,7 @@ export function createApp(repository: SimulationRepository) {
 
   app.use(cors({ origin: "http://localhost:5173" }));
   app.use(express.json());
+  app.use("/api", createGotoRouter(repository));
 
   app.get("/api/health", (_req, res) => {
     res.status(200).json({

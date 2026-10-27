@@ -1,0 +1,11 @@
+{
+  "name": "fleet-floor-simulator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack warehouse robot simulation",
+  "type": "module",
+  "scripts": {},
+  "engines": {
+    "node": ">=24"
+  }
+}

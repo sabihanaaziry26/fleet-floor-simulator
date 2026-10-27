@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { createSimulation } from "./state.js";
+import { createSimulation } from "../src/state.js";
 import {
   placeRobot,
   addObstacle,
   removeObstacle
-} from "./placement.js";
+} from "../src/placement.js";
 
 describe("Robot placement", () => {
   it("places a robot facing north by default", () => {

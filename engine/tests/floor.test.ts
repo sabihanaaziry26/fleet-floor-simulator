@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createFloor, isInsideFloor } from "./floor.js";
+import { createFloor, isInsideFloor } from "../src/floor.js";
 
 describe("Floor creation", () => {
   it("creates the default 10x8 floor", () => {

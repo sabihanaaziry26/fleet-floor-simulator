@@ -174,6 +174,56 @@ At the time of writing, 115 engine tests, 49 backend tests, five original CLI sc
 
 **Local execution:** The project is designed to run locally without cloud infrastructure or authentication.
 
+
+## Assumptions and Ambiguous Behaviors
+
+Some implementation details required explicit decisions.
+
+### GOTO and Occupied Cells
+
+GOTO treats other robots' current positions as obstacles
+during BFS. This means GOTO may wait or choose another route
+rather than assuming another robot will move away during
+the same tick.
+
+This keeps pathfinding deterministic and follows the
+module's requirement to treat occupied cells as walls.
+
+### GOTO with No Battery
+
+A robot with zero battery cannot move, even if a valid
+path exists.
+
+The GOTO command remains queued with a NO_BATTERY result
+rather than being immediately marked unreachable.
+
+The robot can resume navigation if it receives charge.
+
+### Charging Order
+
+Battery consumption and charging happen within the same
+tick, with charging applied after movement resolution.
+
+A robot that moves onto a charger consumes one battery unit
+and then gains ten units, capped at 100.
+
+### Chargers and Robots
+
+A charging station can occupy the same cell as a robot
+because robots must be able to stand on chargers to recharge.
+
+Chargers and obstacles cannot occupy the same cell.
+
+### Simultaneous Movement
+
+All movement decisions use robot positions from the
+beginning of the tick.
+
+Movement intentions are resolved before positions are
+updated, so array iteration order does not determine
+which robots move.
+
+
 ## 11. Potential Improvements
 
 Future enhancements could include:

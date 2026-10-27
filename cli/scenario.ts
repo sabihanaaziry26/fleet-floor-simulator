@@ -95,7 +95,7 @@ function formatBatteryReport(
 
   return sortedRobots(state)
     .map(
-      robot => `${robot.id} BATTERY ${robot.battery}`
+      robot => `${robot.id} ${robot.battery}`
     )
     .join("\n");
 }

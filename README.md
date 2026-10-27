@@ -201,7 +201,7 @@ Expected output:
 
 ```text
 R1 2,0,EAST
-R1 BATTERY 100
+R1 100
 ```
 
 The original `REPORT` command displays each robot's ID, position, and facing direction, sorted by numeric robot ID.

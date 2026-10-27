@@ -20,7 +20,7 @@ TICK 2
 REPORT
 REPORT BATTERY
 `,
-    expected: "R1 2,0,EAST\nR1 BATTERY 100"
+    expected: "R1 2,0,EAST\nR1 100"
   },
   {
     name: "Battery decreases after movement",
@@ -31,7 +31,7 @@ QUEUE R1 MOVE MOVE
 TICK 2
 REPORT BATTERY
 `,
-    expected: "R1 BATTERY 98"
+    expected: "R1 98"
   },
   {
     name: "Blocked movement does not consume battery",
@@ -42,7 +42,7 @@ QUEUE R1 MOVE
 TICK
 REPORT BATTERY
 `,
-    expected: "R1 BATTERY 100"
+    expected: "R1 100"
   },
   {
     name: "Battery report sorts robot IDs numerically",
@@ -54,7 +54,7 @@ PLACE R1 0,0,SOUTH
 REPORT BATTERY
 `,
     expected:
-      "R1 BATTERY 100\nR2 BATTERY 100\nR10 BATTERY 100"
+      "R1 100\nR2 100\nR10 100"
   },
   {
     name: "Invalid charger coordinates are ignored",
@@ -65,7 +65,7 @@ CHARGER BAD
 PLACE R1 0,0,EAST
 REPORT BATTERY
 `,
-    expected: "R1 BATTERY 100"
+    expected: "R1 100"
   },
   {
     name: "Case-insensitive advanced commands",
@@ -78,7 +78,7 @@ tick
 report
 report battery
 `,
-    expected: "R1 1,0,EAST\nR1 BATTERY 100"
+    expected: "R1 1,0,EAST\nR1 100"
   }
 ];
 

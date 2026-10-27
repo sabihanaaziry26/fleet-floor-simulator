@@ -4,8 +4,15 @@
   "private": true,
   "description": "Full-stack warehouse robot simulation",
   "type": "module",
-  "scripts": {},
+  "scripts": {
+    "scenario": "tsx cli/scenario.ts"
+  },
   "engines": {
     "node": ">=24"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.0"
   }
 }

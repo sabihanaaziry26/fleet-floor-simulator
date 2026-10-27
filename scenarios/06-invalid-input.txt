@@ -1,0 +1,30 @@
+# Invalid commands must not stop processing
+
+FLOOR 5,5
+
+# Invalid dimensions
+FLOOR 0,5
+FLOOR 21,5
+
+# Valid robot
+PLACE R1 0,0,EAST
+
+# Invalid placements
+PLACE R2 5,0,NORTH
+PLACE R3 -1,0,NORTH
+PLACE R4 0,0,NORTH
+PLACE INVALID 2,2,NORTH
+
+# Invalid queue commands
+QUEUE R99 MOVE
+QUEUE R1 JUMP
+
+# Invalid tick values
+TICK -1
+TICK 0
+TICK abc
+
+# Valid commands should still execute
+QUEUE R1 MOVE MOVE
+TICK 2
+REPORT

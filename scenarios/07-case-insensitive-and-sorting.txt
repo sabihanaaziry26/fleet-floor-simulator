@@ -1,0 +1,14 @@
+# Test lowercase commands and numeric robot sorting
+
+floor 5,5
+
+place r10 0,0,east
+PLACE R2 2,0,WEST
+Place r1 4,4,north
+
+queue r10 move
+QUEUE r2 move
+queue r1 left
+
+tick
+report

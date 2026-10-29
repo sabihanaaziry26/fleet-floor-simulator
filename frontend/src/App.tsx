@@ -973,6 +973,8 @@ function App() {
                     {robot.id}
                   </strong>
 
+
+                <>
                   <span>
                     ({robot.position.x},{" "}
                     {robot.position.y})
@@ -981,6 +983,26 @@ function App() {
                     {" · "}
                     Battery {robot.battery}%
                   </span>
+
+                  <div className="robot-queue-preview">
+                    <strong>Pending queue:</strong>
+                    {robot.queue.length === 0 ? (
+                      <span>Empty</span>
+                    ) : (
+                      <div className="robot-queue-items">
+                        {robot.queue.map((command, index) => (
+                          <span
+                            className="robot-queue-command"
+                            key={index}
+                          >
+                            {formatCommand(command)}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </>
+
                 </li>
               ))}
             </ul>

@@ -455,3 +455,36 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+
+/* Show pending commands for every robot */
+
+.robot-queue-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+.robot-queue-preview strong {
+  font-size: 12px;
+  color: #334155;
+}
+
+.robot-queue-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.robot-list li .robot-queue-command {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 5px;
+  background: #dbeafe;
+  color: #1e40af;
+  font-size: 12px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}

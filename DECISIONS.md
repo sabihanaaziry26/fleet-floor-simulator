@@ -177,6 +177,18 @@ At the time of writing, 115 engine tests, 49 backend tests, five original CLI sc
 
 ## Assumptions and Ambiguous Behaviors
 
+### Contradiction in the Battery Example
+
+The assessment includes a battery scenario with a 3×1 floor, a robot starting at (0,0) facing EAST, and three queued MOVE commands. The example expects a final battery of 97.
+
+However, only two moves are possible on this floor. The third MOVE attempts to leave the floor and is blocked.
+
+The specification also states that blocked movements do not consume battery. Therefore, the result consistent with the stated rules is 98, not 97.
+
+I chose to follow the explicit movement and battery-consumption rules rather than the contradictory example output. Blocked MOVE commands are consumed but do not reduce battery.
+
+This behavior is covered by the engine's battery and boundary tests.
+
 Some implementation details required explicit decisions.
 
 ### GOTO and Occupied Cells

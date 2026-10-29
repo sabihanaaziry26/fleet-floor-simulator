@@ -4,9 +4,35 @@ A full-stack warehouse robot simulator built with React, TypeScript, Node.js, Ex
 
 The application simulates multiple robots moving across a warehouse floor while handling movement commands, obstacles, simultaneous movement, collisions, automatic pathfinding, battery consumption, and charging stations.
 
+## Selected Depth Modules
+
+I implemented two advanced modules:
+
+### Module A — GOTO Pathfinding
+
+I chose GOTO because it builds on the existing movement engine and introduces an additional algorithmic challenge.
+
+I implemented BFS shortest-path navigation, deterministic direction selection, dynamic replanning, and unreachable destination handling.
+
+### Module B — Battery and Charging
+
+I chose Battery and Charging because it adds resource management to the simulation while using the existing tick-processing model.
+
+I implemented battery consumption, charging stations, empty-battery movement restrictions, and battery reporting.
+
+## Features Not Implemented
+
+The following optional modules were outside my selected scope:
+
+- Module C: Timeline and Fork
+- Module D: Multiple Users in Real Time
+
+Potential future improvements include automated frontend interaction tests, live synchronization across browser tabs, and support for multiple independent simulations.
+
 ## Features
 
 ### Warehouse Simulation
+
 - Configurable warehouse grid, from 1×1 to 20×20.
 - Default web grid: 10×8.
 - Default CLI grid: 5×5.
@@ -16,17 +42,20 @@ The application simulates multiple robots moving across a warehouse floor while 
 - Four facing directions: NORTH, EAST, SOUTH, WEST.
 
 ### Robot Commands
+
 - `MOVE` — move forward one cell.
 - `LEFT` — rotate 90 degrees left.
 - `RIGHT` — rotate 90 degrees right.
 - `GOTO` — automatically navigate toward a destination.
 
-Commands are queued per robot and processed one at a time during simulation ticks.
+Commands are queued per robot and processed during simulation ticks.
 
 ### Simultaneous Movement
-All robots process one queued command per tick.
+
+All robots process their next queued command during each tick.
 
 The simulation supports:
+
 - Wall and obstacle collision detection.
 - Contested-cell resolution using the lowest numeric robot ID.
 - Blocking direct two-robot swaps.
@@ -36,6 +65,7 @@ The simulation supports:
 - Recording tick results and event history.
 
 ### Automatic GOTO Navigation
+
 - Breadth-first search (BFS) shortest-path navigation.
 - Pathfinding tie-breaking order: NORTH, EAST, SOUTH, WEST.
 - Other robots' current positions are treated as blocked cells.
@@ -44,6 +74,7 @@ The simulation supports:
 - A destination with no available route for three consecutive ticks is marked unreachable.
 
 ### Battery and Charging
+
 - Robots begin with 100 battery units.
 - Successful movement consumes 1 battery unit.
 - Blocked movements and rotations consume no battery.
@@ -53,6 +84,7 @@ The simulation supports:
 - Charger locations can be managed through the web interface and CLI.
 
 ### Persistence
+
 Simulation state is saved using SQLite, including robot positions, command queues, battery levels, obstacles, chargers, current tick, and event history.
 
 Saved simulations can be restored after restarting the backend. Older simulation data is migrated to support newly added battery and charger fields.
@@ -130,7 +162,7 @@ npm run dev
 
 The backend runs at:
 
-`http://localhost:3001`
+http://localhost:3001
 
 Start the frontend in a second terminal:
 
@@ -141,7 +173,7 @@ npm run dev
 
 Open the local URL displayed by Vite, normally:
 
-`http://localhost:5173`
+http://localhost:5173
 
 ### Using the Interface
 
